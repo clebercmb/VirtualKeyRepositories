@@ -1,6 +1,8 @@
 import java.util.Scanner;
 
 public class VirtualKeyRepositoriesApp {
+
+    public final static String VIRTUAL_REPOSITORY_FOLDER="VirtualRepository";
     public final static String MENU_ALL_FILES = "1";
     public final static String MENU_FILE_HANDLING = "2";
     public final static String MENU_EXIT = "3";
@@ -16,6 +18,8 @@ public class VirtualKeyRepositoriesApp {
 
         boolean showSubMenu = false;
         String chosenOption="";
+
+        VirtualKeyRepository virtualKeyRepository = new VirtualKeyRepository(VIRTUAL_REPOSITORY_FOLDER);
         do {
             printMenu(showSubMenu);
             chosenOption = chooseMenuOption("");
@@ -25,6 +29,7 @@ public class VirtualKeyRepositoriesApp {
             switch (chosenOption) {
                 case MENU_ALL_FILES:
                     System.out.println("Hey");
+                    virtualKeyRepository.getAllFileInAscendingOrder();
                     break;
                 case MENU_FILE_HANDLING:
                     continue;
@@ -76,6 +81,5 @@ public class VirtualKeyRepositoriesApp {
 
     }
 
-    public static
 
 }
