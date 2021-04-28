@@ -1,6 +1,7 @@
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class VirtualKeyRepositoriesApp {
@@ -18,7 +19,6 @@ public class VirtualKeyRepositoriesApp {
     public static void main(String[] args) throws IOException {
 
         Scanner scan = new Scanner(System.in);
-        String menuOption;
 
         boolean showSubMenu = false;
         String chosenOption="";
@@ -27,7 +27,7 @@ public class VirtualKeyRepositoriesApp {
         do {
             printMenu(showSubMenu);
             chosenOption = chooseMenuOption(chosenOption, scan);
-            showSubMenu = chosenOption.substring(0,1).equals(MENU_FILE_HANDLING) &&
+            showSubMenu = chosenOption.startsWith(MENU_FILE_HANDLING) &&
                         !chosenOption.equals(SUB_MENU_FILE_EXIT);
 
             switch (chosenOption) {
@@ -40,12 +40,15 @@ public class VirtualKeyRepositoriesApp {
                     continue;
                 case SUB_MENU_FILE_CREATE:
                     addFile(virtualKeyRepository, scan);
+                    chosenOption="2";
                     break;
                 case SUB_MENU_FILE_DELETE:
-                    deleteFile();
+                    deleteFile(virtualKeyRepository, scan);
+                    chosenOption="2";
                     break;
                 case SUB_MENU_FILE_SEARCH:
-                    searchFile();
+                    searchFile(virtualKeyRepository, scan);
+                    chosenOption="2";
                     break;
                 case SUB_MENU_FILE_EXIT:
                     chosenOption="";
@@ -62,7 +65,6 @@ public class VirtualKeyRepositoriesApp {
 
     public static String chooseMenuOption(String subMenu, Scanner scan) {
         String chosenOption = "";
-
         do {
             System.out.print("Choose option: ");
             if(scan.hasNextLine()){
@@ -72,13 +74,13 @@ public class VirtualKeyRepositoriesApp {
             (chosenOption.equals(MENU_ALL_FILES) && subMenu.equals("")) ||
             (chosenOption.equals(MENU_FILE_HANDLING) && subMenu.equals(""))||
             (chosenOption.equals(MENU_EXIT) && subMenu.equals("")) ||
-            chosenOption.equals(SUB_MENU_FILE_CREATE) ||
-            chosenOption.equals(SUB_MENU_FILE_DELETE) ||
-            chosenOption.equals(SUB_MENU_FILE_SEARCH) ||
-            chosenOption.equals(SUB_MENU_FILE_EXIT)
+            (chosenOption.equals(SUB_MENU_FILE_CREATE) && subMenu.equals(MENU_FILE_HANDLING) ) ||
+            (chosenOption.equals(SUB_MENU_FILE_DELETE) && subMenu.equals(MENU_FILE_HANDLING) )||
+            (chosenOption.equals(SUB_MENU_FILE_SEARCH) && subMenu.equals(MENU_FILE_HANDLING) )||
+            (chosenOption.equals(SUB_MENU_FILE_EXIT) && subMenu.equals(MENU_FILE_HANDLING) )
         )
         ); // no need for == true
-        System.out.println("");
+        System.out.println();
 
         return chosenOption;
     }
@@ -103,14 +105,15 @@ public class VirtualKeyRepositoriesApp {
     public static void printFiles(ArrayList<File> files) {
         System.out.println("\nList of files:");
         files.forEach(file -> System.out.println(file.getPath()));
-        System.out.println("");
+        System.out.println();
     }
 
 
     public static void addFile(VirtualKeyRepository virtualKeyRepository, Scanner scan) {
         System.out.println("\n*Add File");
 
-        System.out.print("Choose a file at current folder: ");
+        System.out.print("Type a file to be search: ");
+
         String fileName = scan.nextLine();
 
         System.out.println("\n**Directory list: ");
@@ -122,16 +125,25 @@ public class VirtualKeyRepositoriesApp {
         virtualKeyRepository.addFile(fileName, folder);
     }
 
-    public static void deleteFile() {
-        System.out.println("Delete File");
+    public static void deleteFile(VirtualKeyRepository virtualKeyRepository, Scanner scan) {
+        System.out.println("\n*Delete File");
 
-        System.out.println("");
+        printFiles(virtualKeyRepository.getAllFileInAscendingOrder());
+        System.out.print("\nChoose a file at current folder: ");
+        String fileName = scan.nextLine();
+
+        virtualKeyRepository.deleteFile(fileName);
     }
 
-    public static void searchFile() {
-        System.out.println("Search File");
+    public static void searchFile(VirtualKeyRepository virtualKeyRepository, Scanner scan) {
+        System.out.println("\n*Search File");
+        System.out.print("\nChoose a file at current folder: ");
+        String fileName = scan.nextLine();
+        List<File> files = virtualKeyRepository.findFiles(fileName);
 
-        System.out.println("");
+        files.forEach(file-> System.out.println(file.getPath()));
+
+        System.out.println();
     }
 
 

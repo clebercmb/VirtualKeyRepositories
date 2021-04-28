@@ -4,10 +4,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class VirtualKeyRepository {
 
@@ -37,7 +35,7 @@ public class VirtualKeyRepository {
             Path source = Paths.get(filePathToBeAdded);
             Path target = Paths.get(virtualFolder, filePathToBeAdded);
 
-            Files.move(source, target, StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
 
             folders = new ArrayList<>();
             files = new ArrayList<>();
@@ -51,6 +49,29 @@ public class VirtualKeyRepository {
         }
     }
 
+    public void deleteFile(String virtualFolder) {
+
+        Path target = Paths.get(virtualFolder);
+        try {
+            Files.delete(target);
+
+            folders = new ArrayList<>();
+            files = new ArrayList<>();
+
+            loadFilesAndFolders(rootFolder);
+
+        } catch (NoSuchFileException e) {
+            System.out.printf("\nFile %s does not exist!\n\n", virtualFolder);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public List<File> findFiles(String fileName) {
+
+        return files.stream().filter(file -> file.getName().contains(fileName)).collect(Collectors.toList());
+    }
 
     private void loadFilesAndFolders(String root) throws IOException {
 
