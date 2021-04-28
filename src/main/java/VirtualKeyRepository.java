@@ -1,6 +1,8 @@
 import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,38 +17,46 @@ public class VirtualKeyRepository {
     private ArrayList<String> folders = new ArrayList<>();
     private ArrayList<File> files = new ArrayList<>();
 
-    public  VirtualKeyRepository(String rootFolder) {
+    public  VirtualKeyRepository(String rootFolder) throws IOException {
         this.rootFolder = rootFolder;
         loadFilesAndFolders(rootFolder);
-
-        System.out.println("*****Folders");
-        folders.forEach(System.out::println);
-
-        System.out.println("*****Files");
-        files.sort( (f1, f2) -> f1.getName().compareTo(f2.getName()));
-        files.forEach(System.out::println);
-
-
     }
 
-    public ArrayList<String> getAllFileInAscendingOrder() {
-        Path path = Paths.get(rootFolder);
+    public ArrayList<File> getAllFileInAscendingOrder() {
+        files.sort( (f1, f2) -> (f1.getName()+f1.getParentFile().getPath()).compareTo(f2.getName()+f2.getParentFile().getPath()));
+        return files;
+    }
 
-        File f = new File(rootFolder);
+    public ArrayList<String> getFoldersList() {
+        return folders;
+    }
 
-        //System.out.println("***File: ");
-        //Arrays.stream(Objects.requireNonNull(f.listFiles())).forEach(e-> System.out.println(e.getName()));
-        //System.out.println("***Path: :");
-        //path.forEach(e-> System.out.println(e.getFileName()));
-        return null;
+    public void addFile(String filePathToBeAdded, String virtualFolder)  {
+        try {
+
+            Path source = Paths.get(filePathToBeAdded);
+            Path target = Paths.get(virtualFolder, filePathToBeAdded);
+
+            Files.move(source, target, StandardCopyOption.REPLACE_EXISTING);
+
+            folders = new ArrayList<>();
+            files = new ArrayList<>();
+
+            loadFilesAndFolders(rootFolder);
+
+        } catch (NoSuchFileException e) {
+            System.out.println("File or Destination Virtual Folder does not exist\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
-    private void loadFilesAndFolders(String root) {
+    private void loadFilesAndFolders(String root) throws IOException {
+
         File path = new File(root);
-
         for(File file: Objects.requireNonNull(path.listFiles())) {
-            //System.out.println(file.getPath());
+            //System.out.println(file.);
             if (file.isDirectory()) {
                 folders.add(file.getPath());
                 loadFilesAndFolders(file.getPath());
@@ -55,6 +65,9 @@ public class VirtualKeyRepository {
 
             }
         }
+        folders.add(path.getPath());
+
+        folders.sort(String::compareTo);
 
     }
 
