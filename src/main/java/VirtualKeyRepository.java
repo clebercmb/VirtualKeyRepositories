@@ -9,8 +9,8 @@ import java.util.stream.Collectors;
 
 public class VirtualKeyRepository {
 
-    private HashMap<String, String> repository;
-    private String rootFolder;
+    //private HashMap<String, String> repository;
+    private final String rootFolder;
 
     private ArrayList<String> folders = new ArrayList<>();
     private ArrayList<File> files = new ArrayList<>();

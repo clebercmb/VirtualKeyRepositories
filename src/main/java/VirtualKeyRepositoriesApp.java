@@ -129,7 +129,7 @@ public class VirtualKeyRepositoriesApp {
         System.out.println("\n*Delete File");
 
         printFiles(virtualKeyRepository.getAllFileInAscendingOrder());
-        System.out.print("\nChoose a file at current folder: ");
+        System.out.print("\nChoose a file from the list above: ");
         String fileName = scan.nextLine();
 
         virtualKeyRepository.deleteFile(fileName);
